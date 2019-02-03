@@ -106,52 +106,83 @@ char Makuhin(Lab *L)
 			myQ.push({recent.x - 1, recent.y, recent.steps});
 		}
 
+		if (recent.x < X - 1 && mask[recent.y * X + recent.x + 1] != '#')
+		{
+			myQ.push({ recent.x + 1, recent.y, recent.steps });
+		} 
 
+		if (recent.y > 1 && mask[(recent.y - 1)* X + recent.x] != '#')
+		{
+			myQ.push({ recent.x, recent.y - 1, recent.steps });
+		}
+
+		if (recent.y < Y - 1 && mask[(recent.y + 1)* X + recent.x] != '#')
+		{
+			myQ.push({ recent.x, recent.y + 1, recent.steps });
+		}
+
+		myQ.pop();
 	}
 
-	int dist_x = 1000, dist_y = 1000, delta_x = 0, delta_y = 0, min_dist = 1000;
-	cell target = { -1, -1 };
-	for (int x = 0; x < X; x++)
+	int minDist = 1000000;
+	cell target;
+
+	for (cell c : treasures)
 	{
-		for (int y = 0; y < Y; y++)
+		if (c.steps < minDist)
+			target = c;
+	}
+
+	myQ.push(target);
+
+	while (!myQ.empty())
+	{
+		cell recent = myQ.front();
+
+		int rX = recent.x;
+		int rY = recent.y;
+
+		if (mask[rY * X + rX + 1] < recent.steps)
 		{
-			if (L->GetLab(x, y) == '*')
+			if(rX + 1 == x_me && rY == y_me)
 			{
-				dist_x = std::min(abs(x - x_me), dist_x);
-				dist_y = std::min(abs(y - y_me), dist_y);
-				if (dist_x + dist_y < min_dist)
-				{
-					min_dist = dist_x + dist_y;
-					target = { x,y };
-				}
+				return 'U';
 			}
+			myQ.push({ rX + 1, rY, mask[rY * X + rX + 1] });
+			myQ.pop();
+			break;
+		}
+		if (mask[rY * X + rX - 1] < recent.steps)
+		{
+			if (rX - 1 == x_me && rY == y_me)
+			{
+				return 'D';
+			}
+			myQ.push({ rX - 1, rY, mask[rY * X + rX - 1] });
+			myQ.pop();
+			break;
+		}
+		if (mask[(rY - 1) * X + rX ] < recent.steps)
+		{
+			if (rX  == x_me && rY + 1 == y_me)
+			{
+				return 'L';
+			}
+			myQ.push({ rX, rY - 1, mask[(rY -1 )* X + rX ] });
+			myQ.pop();
+			break;
+		}
+		if (mask[(rY + 1) * X + rX] < recent.steps)
+		{
+			if (rX == x_me && rY + 1== y_me)
+			{
+				return 'R';
+			}
+			myQ.push({ rX, rY + 1, mask[(rY + 1)* X + rX] });
+			myQ.pop();
+			break;
 		}
 	}
-
-	int direct_x = target.x - x_me;
-	int direct_y = target.y - y_me;
-
-	if (abs(direct_x) > abs(direct_y))
-	{
-		if (direct_x > 0)
-		{
-			return 'D';
-		}
-		else if (direct_x < 0)
-		{
-			return 'U';
-		}
-	}
-	else
-	{
-		if (direct_y > 0)
-		{
-			return 'R';
-		}
-		else if (direct_y < 0)
-		{
-			return 'L';
-		}
-	}
+	
 	return ' ';
 }
