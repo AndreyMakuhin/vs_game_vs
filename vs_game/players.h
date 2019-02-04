@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <queue>
 
-
-char Test1(Lab *L)
+/*char Test1(Lab *L)
 {
 	L->SetName(__FUNCTION__);
 	
@@ -34,7 +33,7 @@ char Test1(Lab *L)
 		return 'R';
 
 	return ' ';
-}
+}*/
 
 char Test2(Lab *L)
 {
