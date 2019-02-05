@@ -20,10 +20,10 @@ public:
 class Lab
 {
 protected:
-	const int X = 10, Y = 20;
+	const int X = 5, Y = 5;
 
 	//# - wall, v - trap, * - chest of gold
-	
+	/*
 	char lab[10 + 1][20 + 1] =
 	{
 	"####################",
@@ -37,7 +37,8 @@ protected:
 	"#                  #",
 	"####################"
 	};
-	/*
+	
+	
 	char lab[10 + 1][20 + 1] = 
 	{
 	"####################",
@@ -52,13 +53,23 @@ protected:
 	"####################"
 	};
 	*/
+
+	char lab[5 + 1][5 + 1] =
+	{
+	"#####",
+	"#   #",
+	"# * #",
+	"#   #",
+	"#####"	
+	};
+	
 	Player p[2];
 	int cur_p = 0;
 	int move_num = 0;
 	Lab()
 	{
-		p[0].x = 8; p[0].y = 1;
-		p[1].x = 8; p[1].y = 18;
+		p[0].x = 3; p[0].y = 1;
+		p[1].x = 3; p[1].y = 3;
 	}
 	int Next(int i)
 	{
@@ -212,17 +223,17 @@ int main()
 	LTTB.SetNames();
 	
 	//for debug purpose
-	/*
+	
 	LTTB.PrintLab();
 	while (getchar() != ' ')
 	{
 		LTTB.Step();
 		LTTB.PrintLab();
 	}
-	*/
+	
 	
 	//judge
-	
+	/*
 	for (int i = 0; i < 2000; i++)
 		LTTB.Step();
 
@@ -236,7 +247,7 @@ int main()
 		std::cout << "Win player: " << LTTB.GetName(1);
 	else
 		std::cout << "Draw!";
-	
+	*/
 	std::cin.get();
 
 	return 0;
