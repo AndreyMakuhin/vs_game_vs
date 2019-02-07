@@ -20,10 +20,10 @@ public:
 class Lab
 {
 protected:
-	const int X = 5, Y = 5;
+	const int X = 10, Y = 20;
 
 	//# - wall, v - trap, * - chest of gold
-	/*
+	
 	char lab[10 + 1][20 + 1] =
 	{
 	"####################",
@@ -39,7 +39,7 @@ protected:
 	};
 	
 	
-	char lab[10 + 1][20 + 1] = 
+	/*char lab[10 + 1][20 + 1] = 
 	{
 	"####################",
 	"#                  #",
@@ -51,25 +51,25 @@ protected:
 	"#     #vvvvv#      #",
 	"#                  #",
 	"####################"
-	};
-	*/
+	};*/
+	
 
-	char lab[5 + 1][5 + 1] =
+	/*char lab[5 + 1][5 + 1] =
 	{
 	"#####",
 	"#   #",
 	"# * #",
 	"#   #",
 	"#####"	
-	};
+	};*/
 	
 	Player p[2];
 	int cur_p = 0;
 	int move_num = 0;
 	Lab()
 	{
-		p[0].x = 3; p[0].y = 1;
-		p[1].x = 3; p[1].y = 3;
+		p[0].x = 8; p[0].y = 1;
+		p[1].x = 8; p[1].y = 18;
 	}
 	int Next(int i)
 	{
@@ -225,6 +225,7 @@ int main()
 	//for debug purpose
 	
 	LTTB.PrintLab();
+
 	while (getchar() != ' ')
 	{
 		LTTB.Step();
@@ -233,8 +234,8 @@ int main()
 	
 	
 	//judge
-	/*
-	for (int i = 0; i < 2000; i++)
+	
+	/*for (int i = 0; i < 2000; i++)
 		LTTB.Step();
 
 	std::cout << "Player[" << LTTB.GetName(0) << "] score is: " << LTTB.GetScore(0) << std::endl;
@@ -246,8 +247,8 @@ int main()
 	if (LTTB.GetScore(1)*.9 > LTTB.GetScore(0))
 		std::cout << "Win player: " << LTTB.GetName(1);
 	else
-		std::cout << "Draw!";
-	*/
+		std::cout << "Draw!";*/
+	
 	std::cin.get();
 
 	return 0;

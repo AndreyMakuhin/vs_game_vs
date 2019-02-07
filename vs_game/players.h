@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <queue>
+#include <vector>
 
 char Test1(Lab *L)
 {
@@ -54,63 +55,90 @@ char Makuhin(Lab *L)
 		mask[i] = new int[Y];
 		for (int j = 0; j < Y; j++)
 		{
-			mask[i][j] = -1;
+			mask[i][j] = 999999;
 		}
 	}
-	cell treasures[10];
-	int trCount = 0;
+	std::vector<cell> treasures;	
 
 	int x_me, y_me;
 	L->GetMe(x_me, y_me);
 
 	myQ.push({ x_me, y_me, 0 });
+	mask[x_me][y_me] = 0;
 
 	while (!myQ.empty())
 	{
-		cell recent = myQ.front();
-		mask[recent.x][recent.y] = recent.steps;
-		recent.steps++;
+		cell recent = myQ.front();		
+		int deltaSteps = 1;
 		if (L->GetLab(recent.x, recent.y) == '*')
 		{
-			treasures[trCount] = recent;
-			trCount++;
+			treasures.push_back(recent);			
 		}
 
-		if (recent.x > 1 && L->GetLab(recent.x -1 , recent.y) != '#')//(recent.x > 1 && mask[recent.y * X + recent.x - 1] != '#')
+		if (recent.x > 1 && L->GetLab(recent.x - 1 , recent.y) != '#')
 		{
-			if(mask[recent.x - 1][recent.y] < 0)
-				myQ.push({ recent.x - 1, recent.y, recent.steps });
+			if (L->GetLab(recent.x - 1, recent.y) == 'v')
+				deltaSteps = 2;
+			else
+				deltaSteps = 1;
+			
+			if (mask[recent.x - 1][recent.y] > recent.steps)
+			{
+				
+				myQ.push({ recent.x - 1, recent.y, recent.steps + deltaSteps});
+				mask[recent.x - 1][recent.y] = recent.steps + deltaSteps;
+			}				
 		}
 
 		if (recent.x < X - 1 && L->GetLab(recent.x + 1, recent.y) != '#')
 		{
-			if (mask[recent.x + 1][recent.y] < 0)
-				myQ.push({ recent.x + 1, recent.y, recent.steps });
+			if (L->GetLab(recent.x + 1, recent.y) == 'v')
+				deltaSteps = 2;
+			else
+				deltaSteps = 1;
+			
+			if (mask[recent.x + 1][recent.y] > recent.steps)
+			{
+				
+				myQ.push({ recent.x + 1, recent.y, recent.steps + deltaSteps });
+				mask[recent.x + 1][recent.y] = recent.steps + deltaSteps;
+			}				
 		}
 
 		if (recent.y > 1 && L->GetLab(recent.x, recent.y - 1 ) != '#')
 		{
-			if (mask[recent.x][recent.y - 1 ] < 0)
-				myQ.push({ recent.x, recent.y - 1, recent.steps });
+			if (L->GetLab(recent.x, recent.y - 1) == 'v')
+				deltaSteps = 2;
+			else
+				deltaSteps = 1;
+			
+			if (mask[recent.x][recent.y - 1] > recent.steps)
+			{
+				
+				myQ.push({ recent.x, recent.y - 1, recent.steps + deltaSteps });
+				mask[recent.x][recent.y - 1] = recent.steps;
+			}				
 		}
 
 		if (recent.y < Y - 1 && L->GetLab(recent.x, recent.y + 1) != '#')
 		{
-			if (mask[recent.x][recent.y + 1] < 0)
-				myQ.push({ recent.x, recent.y + 1, recent.steps });
+			if (L->GetLab(recent.x, recent.y + 1) == 'v')
+				deltaSteps = 2;
+			else
+				deltaSteps = 1;
+			
+
+			if (mask[recent.x][recent.y + 1] > recent.steps)
+			{
+				
+				myQ.push({ recent.x, recent.y + 1, recent.steps + deltaSteps });
+				mask[recent.x][recent.y + 1] = recent.steps + deltaSteps;
+			}				
 		}
 
 		myQ.pop();
 
-		for (int i = 0; i < X; i++)
-		{			
-			for (int j = 0; j < Y; j++)
-			{
-				std::cout << mask[i][j];
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
+		
 	}
 
 	int minDist = 1000000;
@@ -118,62 +146,95 @@ char Makuhin(Lab *L)
 
 	for (cell c : treasures)
 	{
-		if (c.steps < minDist && c.steps > 0)
+		if (c.steps < minDist)
+		{
 			target = c;
+			minDist = target.steps;
+		}
+			
 	}
 
-	myQ.push(target);
+	//std::cout << "target is " << target.x << " " << target.y << " for " << target.steps << " steps\n";
+
+	myQ.push(target);	
 
 	while (!myQ.empty())
 	{
 		cell recent = myQ.front();
 
-		int rX = recent.x;
-		int rY = recent.y;
-
-		if (mask[rX + 1][rY] < recent.steps)
+		if (mask[recent.x + 1][recent.y] < recent.steps)
 		{
-			if (rX + 1 == x_me && rY == y_me)
+			if (mask[recent.x + 1][recent.y] == 0)
 			{
+				//std::cout << "returning U\n";
 				return 'U';
 			}
-			myQ.push({ rX + 1, rY, mask[rX + 1][rY] - 1 });
-			myQ.pop();
-			break;
-		}
-		if (mask[rX - 1][rY] < recent.steps)
-		{
-			if (rX - 1 == x_me && rY == y_me)
+			else
 			{
+				myQ.push({ recent.x + 1, recent.y, mask[recent.x + 1][recent.y]});
+				myQ.pop();				
+			}			
+		}
+		else if (mask[recent.x - 1][recent.y] < recent.steps)
+		{
+			if (mask[recent.x - 1][recent.y] == 0)
+			{	
+				//std::cout << "returning D\n";
 				return 'D';
 			}
-			myQ.push({ rX - 1, rY, mask[rX - 1][rY] - 1});
-			myQ.pop();
-			break;
-		}
-		if (mask[rX][rY - 1] < recent.steps)
-		{
-			if (rX == x_me && rY + 1 == y_me)
+			else
 			{
-				return 'L';
-			}
-			myQ.push({ rX, rY - 1, mask[rX][rY - 1] - 1 });
-			myQ.pop();
-			break;
+				myQ.push({ recent.x - 1, recent.y, mask[recent.x - 1][recent.y]});
+				myQ.pop();	
+				continue;
+			}			
 		}
-		if (mask[rX][rY + 1] < recent.steps)
+		else if (mask[recent.x][recent.y - 1] < recent.steps)
 		{
-			if (rX == x_me && rY + 1 == y_me)
+			if (mask[recent.x][recent.y - 1] == 0)
 			{
+				//std::cout << "returning R\n";
 				return 'R';
 			}
-			myQ.push({ rX, rY + 1, mask[rX][rY + 1] - 1});
-			myQ.pop();
-			break;
+			else
+			{
+				myQ.push({ recent.x, recent.y - 1, mask[recent.x][recent.y - 1]});
+				myQ.pop();	
+				continue;
+			}			
 		}
-	}
+		else if (mask[recent.x][recent.y + 1] < recent.steps)
+		{
+			if (mask[recent.x][recent.y + 1] == 0)
+			{
+				//std::cout << "returning L\n";
+				return 'L';
+			}
+			else
+			{
+				myQ.push({ recent.x, recent.y + 1, mask[recent.x][recent.y + 1]});
+				myQ.pop();	
+				continue;
+			}			
+		}
+		else
+		{
+			/*std::cout << "returning STOP\n";
+			std::cout << "target params " << target.x << " "<< target.y << " " << target.steps << "\n" ;
+			std::cout << "bot coordinates " << x_me << " " << y_me << "\n";
+			for (int i = 0; i < X; i++)
+			{
+				for (int j = 0; j < Y; j++)
+				{
+					std::cout << mask[i][j] << '\t';
+				}
+				std::cout << std::endl;
+			}
+			std::cout << std::endl;*/
 
-	return ' ';
+			return ' ';
+		}
+	}	
 }
 
 char Test2(Lab *L)
